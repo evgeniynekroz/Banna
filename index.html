@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Brawl Stars — Забери блинговый дроп</title>
+  <!-- Tailwind CSS v3 (полная утилитарная библиотека, совместима с классами из v4) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Кастомные переопределения для точного соответствия дизайну -->
+  <style>
+    /* Полностью скопировано из index.css + дополнительные фиксы для Tailwind */
+    @font-face {
+      font-family: "PusiaBold";
+      src: url("https://link.brawlstars.com/fonts/game/game-pl-ru-tr.woff?v=u0u6bt0") format("woff");
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    :root {
+      font-family: "PusiaBold", Arial, sans-serif;
+    }
+
+    /* Текст-тени, как в оригинале */
+    .game-title,
+    .game-copy,
+    .claim-button {
+      text-shadow:
+        0 -1px #000,
+        0 0 #000,
+        0 1px #000,
+        0 2px #000,
+        -1px -1px #000,
+        1px -1px #000,
+        1px 0 #000,
+        -1px 0 #000,
+        1px 1px #000,
+        -1px 1px #000,
+        1px 2px #000,
+        -1px 2px #000;
+    }
+
+    /* Кнопка с золотым фоном и искажением */
+    .claim-button {
+      border: none;
+      background: transparent url("https://link.brawlstars.com/images/game/button-gold.svg?v=u0u6bt0") center / 100% 100% no-repeat;
+      transform: skew(-7deg);
+      transition: filter 0.2s ease, transform 0.1s ease;
+      cursor: pointer;
+    }
+
+    .claim-button:active {
+      transform: skew(-7deg) scale(0.96);
+    }
+
+    .claim-button:hover {
+      filter: brightness(1.05);
+    }
+
+    .claim-button-text {
+      display: block;
+      padding: 0 8px 8px;
+      transform: skew(7deg);
+    }
+
+    /* Плавающий логотип */
+    .logo-float {
+      animation: logoFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* Анимация появления модалки */
+    .modal-fade {
+      animation: modalFade 180ms ease-out;
+    }
+
+    @keyframes modalFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Дополнительно: устраняем возможные конфликты tailwind с текстом кнопки */
+    .claim-button-text, .game-title, .game-copy {
+      font-weight: bold;
+      letter-spacing: normal;
+    }
+
+    /* Для плавного появления оверлея */
+    .modal-overlay {
+      transition: opacity 0.18s ease;
+    }
+  </style>
+</head>
+<body class="antialiased m-0 p-0 overflow-x-hidden">
+
+<div id="root"></div>
+
+<!-- React & ReactDOM (версия 19, совместима с исходным проектом) -->
+<script src="https://cdn.jsdelivr.net/npm/react@19.2.6/umd/react.development.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@19.2.6/umd/react-dom.development.js"></script>
+
+<script>
+  // Деструктурируем React хуки
+  const { useState } = React;
+
+  // Компонент App (полностью скопированная логика, только JSX заменён на createElement)
+  const App = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // Вспомогательный рендер модалки
+    const renderModal = () => {
+      if (!isModalOpen) return null;
+      return React.createElement('div', {
+        className: 'modal-fade fixed inset-0 z-20 flex items-center justify-center bg-black/70 px-5',
+        onClick: (e) => {
+          // Закрытие при клике на фон
+          if (e.target === e.currentTarget) setIsModalOpen(false);
+        }
+      }, 
+        React.createElement('div', {
+          className: 'w-full max-w-md rounded-xl bg-white p-6 text-left text-zinc-900 shadow-2xl'
+        }, 
+          React.createElement('h2', { className: 'text-2xl font-bold' }, 'Как забрать блинговый дроп'),
+          React.createElement('p', { className: 'mt-3 text-base leading-relaxed text-zinc-700' },
+            'Чтобы получить блинговый дроп, вступи в группу ',
+            React.createElement('a', {
+              href: 'https://t.me/BSKne',
+              target: '_blank',
+              rel: 'noreferrer',
+              className: 'font-semibold text-blue-600 underline'
+            }, 'https://t.me/BSKne'),
+            '. Там будут все инструкции.'
+          ),
+          React.createElement('button', {
+            type: 'button',
+            onClick: () => setIsModalOpen(false),
+            className: 'mt-6 inline-flex h-11 items-center justify-center rounded-md bg-zinc-900 px-5 text-sm font-semibold text-white transition hover:bg-zinc-700'
+          }, 'Понятно')
+        )
+      );
+    };
+
+    return React.createElement('main', {
+      className: 'relative flex min-h-screen flex-col items-center overflow-hidden bg-[#111] text-white'
+    }, 
+      // Фоновое изображение
+      React.createElement('div', {
+        className: 'absolute inset-0 bg-cover bg-bottom bg-no-repeat',
+        style: { backgroundImage: "url('https://link.brawlstars.com/images/game/background.jpg?v=u0u6bt0')" }
+      }),
+      // Полупрозрачный оверлей
+      React.createElement('div', { className: 'absolute inset-0 bg-black/20' }),
+      
+      // Основной контент
+      React.createElement('section', {
+        className: 'relative z-10 flex min-h-screen w-full max-w-[820px] flex-col items-center px-6 pb-10 pt-10 text-center'
+      },
+        // Логотип с анимацией и ссылкой
+        React.createElement('a', {
+          href: 'https://brawlstars.com',
+          target: '_blank',
+          rel: 'noreferrer',
+          className: 'logo-float mt-2 inline-block w-[220px] sm:w-[300px]',
+          'aria-label': 'Официальный сайт Brawl Stars'
+        }, 
+          React.createElement('img', {
+            src: 'https://link.brawlstars.com/images/game/logo.svg',
+            alt: 'Brawl Stars',
+            className: 'w-full'
+          })
+        ),
+        
+        // Заголовок
+        React.createElement('h1', {
+          className: 'game-title mt-8 max-w-[24ch] text-3xl leading-none font-bold tracking-wide text-white sm:text-[42px]'
+        }, 'Захватывающие сражения 3 на 3'),
+        
+        // Кнопка "Забрать"
+        React.createElement('button', {
+          type: 'button',
+          onClick: () => setIsModalOpen(true),
+          className: 'claim-button mt-8 inline-flex h-16 min-w-[240px] items-center justify-center px-6 text-3xl font-bold text-[#1f1300] transition duration-200 active:scale-95'
+        },
+          React.createElement('span', { className: 'claim-button-text' }, 'Забрать')
+        ),
+        
+        // Нижний текст "Скачать Brawl Stars"
+        React.createElement('p', {
+          className: 'game-copy mt-auto pb-1 text-2xl leading-none font-bold tracking-wide text-white'
+        }, 'Скачать Brawl Stars')
+      ),
+      
+      // Модальное окно (рендерится условно)
+      renderModal()
+    );
+  };
+
+  // Рендеринг приложения через createRoot (React 19 style)
+  const rootElement = document.getElementById('root');
+  if (rootElement) {
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(React.createElement(App, null));
+  }
+</script>
+</body>
+  </html>
